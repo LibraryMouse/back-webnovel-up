@@ -3,74 +3,96 @@ from bs4 import BeautifulSoup
 import re
 import time
 import random
+import json
+import argparse
+
+# MAIN PROGRAM
+
+# GIVEN_URL = str(input("Please provide the URL of Table Of Content subpage of webnovel you wish to back up."))
+GIVEN_URL_A = "https://readnovelfull.com/omniscient-readers-viewpoint-v1.html#tab-chapters-title"
+GIVEN_URL_B = "https://bestlightnovel.com/novel_888102980"
+GIVEN_URL_C = "https://www.readwn.com/novel/omniscient-reader.html"
 
 
+# REQUEST A PAGE
 
-def get_chapterlist(WEBNOVEL_URL):
-    CHAPTER_URLS_LIST = ""
-    WEBNOVEL_MAINPAGE = find_main_page_of_webnovel(WEBNOVEL_URL)
-    SUBPAGE_SOUP = get_subpage_as_soup(WEBNOVEL_MAINPAGE)
-    return CHAPTER_URLS_LIST
-
-
-def find_main_page_of_webnovel(WEBNOVEL_URL):
-    WEBNOVEL_MAINPAGE = ""
-    if WEBNOVEL_URL.rfind(".html") > -1 :
-        n = WEBNOVEL_URL.rfind(".html") + 5
-        WEBNOVEL_MAINPAGE = WEBNOVEL_URL[:n]
-    elif WEBNOVEL_URL.rfind(".htm") > -1 : 
-        n = WEBNOVEL_URL.rfind(".htm") + 4
-        WEBNOVEL_MAINPAGE = WEBNOVEL_URL[:n]
-    else: WEBNOVEL_MAINPAGE = find_main_page_of_webnovel_when_not_htm(WEBNOVEL_URL)
-    return WEBNOVEL_MAINPAGE
+def get_page_as_soup(page_url):
+    randomly_delay_requests()
+    page = requests.get(page_url)
+    page_soup = BeautifulSoup(page.content, "html.parser")
+    return page_soup
 
 
-def find_main_page_of_webnovel_when_not_htm(WEBNOVEL_URL):
-    WEBNOVEL_MAINPAGE = ""
-    n = WEBNOVEL_URL.rfind("chap")
-    cropped = WEBNOVEL_URL[:n]
-    WEBNOVEL_MAINPAGE = WEBNOVEL_URL.rsplit("/", 1)[0]
-    return WEBNOVEL_MAINPAGE
-
-
-def use_archivepage_instead_of_mainpage(WEBNOVEL_MAINPAGE):
-    if WEBNOVEL_MAINPAGE.rfind("readnovelfull") > -1 :
-        archivepage_readnovelfull = WEBNOVEL_MAINPAGE + "#tab-chapters-title"
-        WEBNOVEL_MAINPAGE = archivepage_readnovelfull
-    return WEBNOVEL_MAINPAGE
-
-
-def get_subpage_as_soup(SUBPAGE_URL):
-    subpage = requests.get(SUBPAGE_URL)
-    SUBPAGE_SOUP = BeautifulSoup(subpage.content, "html.parser")
-    return SUBPAGE_SOUP
-
-
-def find_chapters_in_soup_A(SUBPAGE_SOUP):
-    SUBPAGE_SOUP.find_all(re.compile("chapter.*list"))
-    return CHAPTER_URLS_LIST
-
-
-def randomly_delay_requests(self):
-    delay = random.randrange(500, 2000) * 0,001
-    time.sleep(delay)
-
-
-def is_chapterlist_valid():
-    validness_of_chapterlist = False
-    return validness_of_chapterlist
-
-
-def markdown_chapter():
+def randomly_delay_requests():
+    delay = random.randrange(500, 1000) * 0.001
     pass
 
 
-def create_one_file():
-    pass
+# FIND A WEBNOVEL TABLE OF CONTENT // UNNECESSARY
+
+def find_main_page_of_webnovel(webnovel_url):
+    webnovel_mainpage = ""
+    if webnovel_url.rfind(".html") > -1 :
+        n = webnovel_url.rfind(".html") + 5
+        webnovel_mainpage = webnovel_url[:n]
+    elif webnovel_url.rfind(".htm") > -1 : 
+        n = webnovel_url.rfind(".htm") + 4
+        webnovel_mainpage = webnovel_url[:n]
+    else: webnovel_mainpage = find_main_page_of_webnovel_when_not_htm(webnovel_url)
+    return webnovel_mainpage
 
 
-def add_chapter_to_one_file():
-    pass
+def find_main_page_of_webnovel_when_not_htm(webnovel_url):
+    webnovel_mainpage = ""
+    n = webnovel_url.rfind("chap")
+    cropped = webnovel_url[:n]
+    webnovel_mainpage = webnovel_url.rsplit("/", 1)[0]
+    return webnovel_mainpage
+
+
+def use_archivepage_instead_of_mainpage(webnovel_mainpage):
+    if webnovel_mainpage.rfind("readnovelfull") > -1 :
+        archivepage_readnovelfull = webnovel_mainpage + "#tab-chapters-title"
+        webnovel_mainpage = archivepage_readnovelfull
+    return webnovel_mainpage
+
+
+# CREATE TABLE OF CONTENT DICTIONARY FILE
+
+# given_url -> request Table Of Content page -> soupify ->
+# -> from soup extract chapterlist part of soup -> extract all the links ->
+# -> create dictionary of chapter names and chapter links -> save dict as json file
+
+def create_table_of_content_file(GIVEN_URL):
+    given_url_soup = get_page_as_soup(GIVEN_URL)
+    chapterlist_sub_soup = find_chapterlist_in_soup(given_url_soup)
+    chapterlinks_list = []
+
+    return filename
+    
+
+def find_chapterlist_in_soup(some_soup):
+    chapterlist_wordings = [
+            "list_chapter",
+            "list-chapter",
+            "chapter-list",
+            "chapter_list",
+            "tab-content"
+            ]
+    chapterlist_tag = some_soup.find_all(class_ = chapterlist_wordings)
+    return chapterlist_tag
+
+
+def find_all_links_in_soup(some_soup):
+    list_of_links = some_soup.find_all('a')
+    return list_of_links
+
+
+# GET ONE CHAPTER CONTENT
 
 
 
+# ADD ONE CHAPTER TO TXT FILE
+
+
+# FINAL ACTIONS
